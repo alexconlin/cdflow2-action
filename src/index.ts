@@ -33,6 +33,7 @@ async function getJson<T = any>(url: string): Promise<T> {
             "user-agent": "cdflow2-action/0.0"
         }
         if (getInput("githubToken")) {
+            debug(`Using githubToken of length ${getInput("githubToken").length}`)
             headers.authorization = `Bearer ${getInput("githubToken")}`
         }
         const req = https.request(url, {

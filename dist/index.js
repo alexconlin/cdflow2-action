@@ -6555,6 +6555,7 @@ async function getJson(url) {
             "user-agent": "cdflow2-action/0.0"
         };
         if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("githubToken")) {
+            (0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.debug)(`Using githubToken of length ${(0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("githubToken").length}`);
             headers.authorization = `Bearer ${(0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("githubToken")}`;
         }
         const req = https__WEBPACK_IMPORTED_MODULE_6___default().request(url, {
