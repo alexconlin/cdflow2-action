@@ -27,6 +27,7 @@ function fetchAppVersion(): string {
 
 async function getJson<T = any>(url: string): Promise<T> {
     return new Promise(((resolve, reject) => {
+        debug(`process.env["GITHUB_TOKEN"] length: ${process.env["GITHUB_TOKEN"]?.length}`)
         const req = https.request(url, {
             headers: {
                 "accept": "application/vnd.github.v3+json",
