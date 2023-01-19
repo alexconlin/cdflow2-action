@@ -31,7 +31,7 @@ async function getJson<T = any>(url: string): Promise<T> {
             headers: {
                 "accept": "application/vnd.github.v3+json",
                 "user-agent": "cdflow2-action/0.0",
-                `authorization: Bearer ${process.env["GITHUB_TOKEN"]}`
+                "authorization": `Bearer ${process.env["GITHUB_TOKEN"]}`
             }
         }, res => {
             if (res.statusCode !== 200) {
@@ -80,7 +80,7 @@ let toolPath = find("cdflow2", cdflowVersion, cdflowArch())
 if (!toolPath) {
     const cdflowPath = await downloadTool(
       `https://github.com/mergermarket/cdflow2/releases/download/${cdflowVersion}/cdflow2-${process.platform}-${cdflowArch()}`,
-      null,
+      undefined,
       `Bearer ${process.env["GITHUB_TOKEN"]}`)
     await fs.promises.chmod(cdflowPath, 0o775)
 
