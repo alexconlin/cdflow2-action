@@ -5,6 +5,7 @@ import {cacheDir, downloadTool, find} from "@actions/tool-cache"
 import {exec} from "@actions/exec"
 import {mv} from "@actions/io"
 import https from "https";
+import type {IncomingHttpHeaders} from "http";
 
 function cdflowArch(): string {
     switch (process.arch) {
@@ -27,13 +28,15 @@ function fetchAppVersion(): string {
 
 async function getJson<T = any>(url: string): Promise<T> {
     return new Promise(((resolve, reject) => {
-        debug(`process.env["GITHUB_TOKEN"] length: ${process.env["GITHUB_TOKEN"]?.length}`)
+        const headers: IncomingHttpHeaders = {
+            "accept": "application/vnd.github.v3+json",
+            "user-agent": "cdflow2-action/0.0"
+        }
+        if (getInput("githubToken")) {
+            headers.authorization = `Bearer ${getInput("githubToken")}`
+        }
         const req = https.request(url, {
-            headers: {
-                "accept": "application/vnd.github.v3+json",
-                "user-agent": "cdflow2-action/0.0",
-                "authorization": `Bearer ${process.env["GITHUB_TOKEN"]}`
-            }
+            headers: headers
         }, res => {
             if (res.statusCode !== 200) {
                 const error = new Error(`${url}: ${res.statusCode} ${res.statusMessage}`)
@@ -82,7 +85,7 @@ if (!toolPath) {
     const cdflowPath = await downloadTool(
       `https://github.com/mergermarket/cdflow2/releases/download/${cdflowVersion}/cdflow2-${process.platform}-${cdflowArch()}`,
       undefined,
-      `Bearer ${process.env["GITHUB_TOKEN"]}`)
+      getInput("githubToken") ? `Bearer ${getInput("githubToken")}` : undefined)
     await fs.promises.chmod(cdflowPath, 0o775)
 
     const cdflowPathDir = cdflowPath + "_dir"

@@ -6550,13 +6550,15 @@ function fetchAppVersion() {
 }
 async function getJson(url) {
     return new Promise(((resolve, reject) => {
-        (0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.debug)(`process.env["GITHUB_TOKEN"] length: ${(node_process__WEBPACK_IMPORTED_MODULE_0___default().env.GITHUB_TOKEN.length)}`);
+        const headers = {
+            "accept": "application/vnd.github.v3+json",
+            "user-agent": "cdflow2-action/0.0"
+        };
+        if ((0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("githubToken")) {
+            headers.authorization = `Bearer ${(0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("githubToken")}`;
+        }
         const req = https__WEBPACK_IMPORTED_MODULE_6___default().request(url, {
-            headers: {
-                "accept": "application/vnd.github.v3+json",
-                "user-agent": "cdflow2-action/0.0",
-                "authorization": `Bearer ${(node_process__WEBPACK_IMPORTED_MODULE_0___default().env.GITHUB_TOKEN)}`
-            }
+            headers: headers
         }, res => {
             if (res.statusCode !== 200) {
                 const error = new Error(`${url}: ${res.statusCode} ${res.statusMessage}`);
@@ -6597,7 +6599,7 @@ async function resolveVersion(input) {
 const cdflowVersion = await resolveVersion((0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("version"));
 let toolPath = (0,_actions_tool_cache__WEBPACK_IMPORTED_MODULE_3__.find)("cdflow2", cdflowVersion, cdflowArch());
 if (!toolPath) {
-    const cdflowPath = await (0,_actions_tool_cache__WEBPACK_IMPORTED_MODULE_3__.downloadTool)(`https://github.com/mergermarket/cdflow2/releases/download/${cdflowVersion}/cdflow2-${(node_process__WEBPACK_IMPORTED_MODULE_0___default().platform)}-${cdflowArch()}`, undefined, `Bearer ${(node_process__WEBPACK_IMPORTED_MODULE_0___default().env.GITHUB_TOKEN)}`);
+    const cdflowPath = await (0,_actions_tool_cache__WEBPACK_IMPORTED_MODULE_3__.downloadTool)(`https://github.com/mergermarket/cdflow2/releases/download/${cdflowVersion}/cdflow2-${(node_process__WEBPACK_IMPORTED_MODULE_0___default().platform)}-${cdflowArch()}`, undefined, (0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("githubToken") ? `Bearer ${(0,_actions_core__WEBPACK_IMPORTED_MODULE_2__.getInput)("githubToken")}` : undefined);
     await node_fs__WEBPACK_IMPORTED_MODULE_1___default().promises.chmod(cdflowPath, 0o775);
     const cdflowPathDir = cdflowPath + "_dir";
     const cdflow2Leafname = (node_process__WEBPACK_IMPORTED_MODULE_0___default().platform) === "win32" ? "cdflow2.exe" : "cdflow2";

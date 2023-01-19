@@ -28,6 +28,9 @@ inputs:
   component:
     description: 'component to act on'
     required: false
+  githubToken:
+    description: 'github authentication token to use when downloading cdflow (increases rate limit)'
+    required: false
 runs:
   using: 'node16'
   main: 'dist/index.js'
